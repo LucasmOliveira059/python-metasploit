@@ -1,3 +1,5 @@
 pymetasploit3
 python-nmap
 pyshark
+googlesearch-python
+requests
