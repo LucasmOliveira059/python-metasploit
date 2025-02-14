@@ -43,3 +43,4 @@ class MetasploitClient:
         if result and 'session_id' in result:
             print(f"Sessão criada: {result['session_id']}")
             return result['session_id']
+

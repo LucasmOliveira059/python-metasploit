@@ -76,12 +76,12 @@ def criar_payload(padrao, parametros):
         raise ValueError(f"Parâmetro faltando: {e}")
 
 # Exemplo de uso
-padrao = "id={id}&nome={nome}&comando={comando}"
-parametros = {
-    "id": "1",
-    "nome": "admin",
-    "comando": "ls -la"
-}
+#padrao = "id={id}&nome={nome}&comando={comando}"
+#parametros = {
+#    "id": "1",
+#    "nome": "admin",
+#    "comando": "ls -la"
+#}
 
 #payload = criar_payload(padrao, parametros)
 #print(payload)  # Saída: id=1&nome=admin&comando=ls -la
