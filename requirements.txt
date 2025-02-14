@@ -3,3 +3,4 @@ python-nmap
 pyshark
 googlesearch-python
 requests
+dnspython
