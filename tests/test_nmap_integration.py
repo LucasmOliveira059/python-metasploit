@@ -4,22 +4,93 @@ from metasploit import NmapScanner  # Substitua pelo nome do seu módulo
 
 class TestNmapScanner(unittest.TestCase):
     @patch('nmap.PortScanner')
-    def test_scan_host(self, mock_port_scanner):
-        # Configura o mock
-        mock_scanner = MagicMock()
-        mock_scanner.scan.return_value = None
-        mock_scanner.__getitem__.return_value = {"tcp": {80: {"state": "open"}}}
-        mock_port_scanner.return_value = mock_scanner
+    def test_scan_hosts(self, mock_port_scanner):
+        # Simular o objeto scanNmap
+        scanNmap = MagicMock()
 
-        # Executa o teste
-        scanner = NmapScanner()
-        result = scanner.scan_host("192.168.1.1")
+        # Configurar os dados simulados
+        scanNmap.all_hosts.return_value = ["192.168.1.1"]
 
-        # Verifica o resultado
-        self.assertIn("tcp", result)
-        self.assertIn(80, result["tcp"])
-        self.assertEqual(result["tcp"][80]["state"], "open")
-        mock_scanner.scan.assert_called_once_with("192.168.1.1", arguments="-sV")
+        # Simular o comportamento de scanNmap["192.168.1.1"]
+        host_mock = MagicMock()
+        host_mock.all_protocols.return_value = ['tcp']
+        host_mock.__getitem__.side_effect = lambda key: {
+            'status': {'state': 'up'},
+            'addresses': {'mac': '00:11:22:33:44:55'},
+            'vendor': {'00:11:22:33:44:55': 'FabricanteX'},
+            'tcp': {
+                80: {'state': 'open', 'name': 'http'},
+                443: {'state': 'open', 'name': 'https'}
+            }
+        }.get(key, {})
+
+        scanNmap.__getitem__.return_value = host_mock
+
+        # Configurar o mock do PortScanner para retornar o scanNmap simulado
+        mock_port_scanner.return_value = scanNmap
+
+        # Chamar a função scan_hosts
+        resultados = NmapScanner.scan_hosts(scanNmap)
+
+        # Verificar os resultados
+        self.assertEqual(len(resultados), 1)  # Deve haver 1 host no resultado
+
+        host_info = resultados[0]
+        self.assertEqual(host_info["host"], "192.168.1.1")
+        self.assertEqual(host_info["estado"], "up")
+        self.assertEqual(host_info["enderecoMAC"], "00:11:22:33:44:55")
+        self.assertEqual(host_info["fabricante"], "FabricanteX")
+
+        # Verificar as portas
+        self.assertEqual(len(host_info["portas"]), 2)
+        self.assertEqual(host_info["portas"][0], {
+            "porta": 80,
+            "protocolo": "tcp",
+            "estado": "open",
+            "servico": "http"
+        })
+        self.assertEqual(host_info["portas"][1], {
+            "porta": 443,
+            "protocolo": "tcp",
+            "estado": "open",
+            "servico": "https"
+        })
+
+
+    @patch('nmap.PortScanner')
+    def test_scan_hosts_sem_mac(self, mock_port_scanner):
+        # Simular o objeto scanNmap
+        scanNmap = MagicMock()
+
+        # Configurar os dados simulados
+        scanNmap.all_hosts.return_value = ["192.168.1.2"]
+
+        # Simular o comportamento de scanNmap["192.168.1.2"]
+        host_mock = MagicMock()
+        host_mock.all_protocols.return_value = ['tcp']
+        host_mock.__getitem__.side_effect = lambda key: {
+            'status': {'state': 'up'},
+            'addresses': {},  # Sem endereço MAC
+            'vendor': {},  # Sem fabricante
+            'tcp': {
+                22: {'state': 'open', 'name': 'ssh'}
+            }
+        }.get(key, {})
+
+        scanNmap.__getitem__.return_value = host_mock
+
+        # Configurar o mock do PortScanner para retornar o scanNmap simulado
+        mock_port_scanner.return_value = scanNmap
+
+        # Chamar a função scan_hosts
+        resultados = NmapScanner.scan_hosts(scanNmap)
+
+        # Verificar os resultados
+        self.assertEqual(len(resultados), 1)
+
+        host_info = resultados[0]
+        self.assertEqual(host_info["enderecoMAC"], "Desconhecido")
+        self.assertEqual(host_info["fabricante"], None)
 
     @patch('nmap.PortScanner')
     def test_list_open_ports(self, mock_port_scanner):
