@@ -1,15 +1,32 @@
 import json
 from metasploit import MetasploitClient
 from metasploit.nmap_integration import NmapScanner  # Substitua pelo caminho correto do seu módulo
+from metasploit.webvulnerabilityscanner import WebVulnerabilityScanner  # Importando a classe de vulnerabilidades web
 import socket
 
 # Inicialize o cliente do Metasploit
 metasploit_client = MetasploitClient("senhasenha")
 
-# Obtenha a lista de exploits disponíveis
-exploits = metasploit_client.list_exploits()
+# Inicialize o scanner de vulnerabilidades web
+web_scanner = WebVulnerabilityScanner()
 
-def main():
+def escolher_frente():
+    """
+    Pergunta ao usuário em qual frente deseja trabalhar.
+    """
+    print("Escolha a frente de trabalho:")
+    print("1. Exploração de Rede")
+    print("2. Google Dork")
+    print("3. Criar/Consultar Payloads")
+    print("4. Usar Wireshark")
+    print("5. Sair")
+    escolha = input("Digite o número da frente desejada: ").strip()
+    return escolha
+
+def exploracao_de_rede():
+    """
+    Função para realizar a exploração de rede.
+    """
     # Inicializa o scanner Nmap
     scanner = NmapScanner()
 
@@ -70,7 +87,6 @@ def main():
                 PAYLOADS[port].append({
                     "nome": exploit,
                 })
-
 
     # Loop para escolher portas e payloads
     resultados_exploracao = []
@@ -154,6 +170,42 @@ def main():
     with open("relatorio_scan.json", "w") as f:
         json.dump(relatorio, f, indent=4)
     print("\nRelatório salvo em 'relatorio_scan.json'.")
+
+def google_dork():
+    """
+    Função para realizar buscas com Google Dork.
+    """
+    web_scanner.osint_search()
+
+def criar_consultar_payloads():
+    """
+    Função para criar ou consultar payloads.
+    """
+    print("Funcionalidade de criação/consulta de payloads ainda não implementada.")
+
+def usar_wireshark():
+    """
+    Função para usar o Wireshark.
+    """
+    print("Funcionalidade de uso do Wireshark ainda não implementada.")
+
+def main():
+    while True:
+        escolha = escolher_frente()
+
+        if escolha == "1":
+            exploracao_de_rede()
+        elif escolha == "2":
+            google_dork()
+        elif escolha == "3":
+            criar_consultar_payloads()
+        elif escolha == "4":
+            usar_wireshark()
+        elif escolha == "5":
+            print("Saindo...")
+            break
+        else:
+            print("Escolha inválida. Tente novamente.")
 
 if __name__ == "__main__":
     main()

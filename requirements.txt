@@ -1,6 +1,10 @@
-pymetasploit3
-python-nmap
-pyshark
+pymetasploit3~=1.0.6
+python-nmap~=0.7.1
+pyshark~=0.6
 googlesearch-python
-requests
-dnspython
+requests~=2.32.3
+dnspython~=2.7.0
+pip~=23.2.1
+retry~=0.9.2
+setuptools~=75.8.0
+beautifulsoup4~=4.13.3

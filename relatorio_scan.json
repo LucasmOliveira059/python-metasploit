@@ -55,33 +55,8 @@
             "exploit": "windows/ssh/putty_msg_debug",
             "opcoes_configuradas": {
                 "SRVHOST": "0.0.0.0",
-                "SRVPORT": "22",
+                "SRVPORT": 22,
                 "SSLVersion": "Auto"
-            },
-            "session_id": null
-        },
-        {
-            "porta": 22,
-            "exploit": "unix/ssh/arista_tacplus_shell",
-            "opcoes_configuradas": {
-                "RPORT": "22",
-                "SSH_IDENT": "SSH-2.0-OpenSSH_7.6p1 Ubuntu-4ubuntu0.3",
-                "USERNAME": "admin",
-                "PASSWORD": "123456",
-                "GatherProof": false
-            },
-            "session_id": null
-        },
-        {
-            "porta": 80,
-            "exploit": "windows/http/xampp_webdav_upload_php",
-            "opcoes_configuradas": {
-                "RPORT": 80,
-                "SSLVersion": "Auto",
-                "DOMAIN": "WORKSTATION",
-                "PATH": "/webdav/",
-                "USERNAME": "wampp",
-                "PASSWORD": "xampp"
             },
             "session_id": null
         }
